@@ -2,7 +2,7 @@ import json
 import pytest
 
 from aws_cdk import core
-from hello-s3-v2.hello_s3_v2_stack import HelloS3V2Stack
+from hello_s3_v2_stack import HelloS3V2Stack
 
 
 def get_template():
