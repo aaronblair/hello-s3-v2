@@ -2,10 +2,10 @@ from aws_cdk import (
     core,
     aws_s3 as _s3,
     aws_lambda as _lambda,
-    aws_lambda_python as _lambda_python,
     aws_events as _events,
     aws_events_targets as _targets
 )
+from os import path
 
 
 class HelloS3V2Stack(core.Stack):
@@ -16,14 +16,11 @@ class HelloS3V2Stack(core.Stack):
                             id='hello-s3-bucket'
                             )
 
-        hello_lambda = _lambda_python.PythonFunction(self,
-                                                     id='hello-s3-lambda',
-                                                     entry='hello_s3_lambda',
-                                                     handler='lambda_handler',
-                                                     index='app.py',
-                                                     runtime=_lambda.Runtime.PYTHON_3_8,
-                                                     environment={'OUTPUT_BUCKET_NAME': bucket.bucket_name}
-                                                     )
+        hello_lambda = _lambda.DockerImageFunction(self,
+                                                   id='hello-s3-lambda',
+                                                   code=_lambda.DockerImageCode.from_image_asset(path.realpath('./hello_s3_lambda')),
+                                                   environment={'OUTPUT_BUCKET_NAME': bucket.bucket_name}
+                                                   )
 
         sched_event = _events.Rule(self,
                                    id='hello-s3-sched',
